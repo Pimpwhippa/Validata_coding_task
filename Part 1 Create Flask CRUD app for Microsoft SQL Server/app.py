@@ -37,6 +37,7 @@ def create_bank():
     return render_template('create.html')
 
 
+# Route to list all banks
 @app.route('/banks', methods =['GET'])
 def list_banks():
     # Create a new connection to Azure SQL Server
@@ -57,6 +58,8 @@ def list_banks():
     # Render the template with the list of banks
     return render_template('banks.html', banks=rows)
 
+
+# Route to retrieve a bank record
 @app.route('/banks/<int:bank_id>')
 def get_bank(bank_id):
     # Create a new connection to Azure SQL Server
@@ -91,36 +94,40 @@ def get_bank(bank_id):
 
 
 # Route to update a bank record
-@app.route('/updatebank/<int:bank_id>', methods=['GET','POST'])
-def update_bank(bank_id):
+@app.route('/updatebank', methods=['GET','POST'])
+def update_bank():
     
-    if request.method == 'POST':
+    if request.method == 'POST': 
     # Retrieve form data
-        id = request.form['id']
+        bank_id = request.form['id']
         name = request.form['name']
         location = request.form['location']
         
-        # Create a connection to the Azure SQL Database
-        conn_str =f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-        conn = pyodbc.connect(conn_str)
-        cursor = conn.cursor()
-        
-        # Update the bank record
-        query = "UPDATE Banks SET name=?, location=? WHERE id=?"
-        cursor.execute(query, (id, name, location))
-        
-        # Commit the changes and close the connection
-        conn.commit()
-        conn.close()
-        
-        return 'Bank record updated successfully!'
-    
-    #except Exception as e:
-    return "Cannot update bank" #f'An error occurred: {str(e)}'
+        try:
+            # Create a connection to the Azure SQL Database
+            conn = pyodbc.connect(conn_str)
+            cursor = conn.cursor()
+
+            # Update the bank record
+            query = "UPDATE Banks SET name=?, location=? WHERE id = ?;"
+            cursor.execute(query, (name, location, bank_id))
+
+            if cursor.rowcount == 0:
+                return "No bank record found for the specified ID. Update unsuccessful."
+            conn.commit()
+
+            # Close the cursor and connection
+            cursor.close()
+            conn.close()
+
+            return "Bank record updated successfully!"
+        except pyodbc.Error as e:
+            return f"An error occurred: {str(e)}"
+    else:
+        return render_template('update.html')
 
 
-
-
+# Route to delete a bank record
 @app.route('/deletebank/<int:bank_id>', methods=['GET','POST'])
 def delete_bank(bank_id):
     # Create a new connection to Azure SQL Server
@@ -147,9 +154,6 @@ def delete_bank(bank_id):
     # Close the cursor and connection
     cursor.close()
     conn.close()
-
-    #cursor.execute(query, bank_id)
-    #conn.commit()
 
     return "Bank deleted successfully!"
 

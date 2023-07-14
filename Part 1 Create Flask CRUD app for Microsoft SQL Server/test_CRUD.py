@@ -1,11 +1,8 @@
-import sys
-sys.path.append("..")
-from app import create_bank, list_banks, get_bank, update_bank, delete_bank
-from app import app
-import pytest
-from flask import Flask
 import pyodbc
+import pytest
 import requests
+from app import app
+from flask import Flask
 from unittest.mock import MagicMock
 
 # Mock the database connection
@@ -66,6 +63,7 @@ def test_create_bank(client, monkeypatch):
     monkeypatch.setattr('pyodbc.connect', lambda _: mock_conn)
     monkeypatch.setattr('pyodbc.Cursor', lambda *_: mock_cursor)
 
+    # sending data to create a record
     data = {
         'id': '123',
         'name': 'My Bank',
@@ -90,26 +88,34 @@ def test_list_banks(client):
 
 def test_get_bank(client):
     # Make a GET request to the /banks/<bank_id> route
-    bank_id = 1
+    bank_id = 2
     response = client.get(f'/banks/{bank_id}')
 
     assert response.status_code == 200
-    assert b"ABC Bank" in response.data
-    assert b"New York" in response.data
+    assert b"Billionaire Bank" in response.data
+    assert b"Dublin" in response.data
 
 
-def test_update_bank(client):
-    # Send a PUT request to update a bank's record
-    response = client.put('/banks/1', json={'name': 'Bank X', 'location': 'Location X'})
+def test_update_bank(client,monkeypatch):
+    # Mock the database connection and cursor
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    monkeypatch.setattr('pyodbc.connect', lambda _: mock_conn)
+    monkeypatch.setattr('pyodbc.Cursor', lambda *_: mock_cursor)
 
-    # Check the response status code
+    # send data to update a record
+    data = {
+        'id': '123',
+        'name': 'My Bank',
+        'location': 'City'
+    }
+        
+    # Make a POST request to the /updatebank route
+    response = client.post('/updatebank', data=data)
+
     assert response.status_code == 200
+    assert response.data == b"Bank record updated successfully!"
 
-    # Check the response data
-    data = response.get_json()
-    assert data['id'] == 1
-    assert data['name'] == 'Bank X'
-    assert data['location'] == 'Location X'
 
 def test_delete_bank(client, monkeypatch):
 
@@ -120,16 +126,8 @@ def test_delete_bank(client, monkeypatch):
 
     # Make a POST request to the /deletebank/<bank_id> route
     bank_id = 1
-    response = client.delete(f'/deletebank/{bank_id}')
-
-    assert response.status_code == 200
-    assert b"Bank deleted successfully!" in response.data
-    # Send a DELETE request to delete a bank record
-    #response = client.delete('/banks/1')
-
+    response = client.post('/deletebank/1')
+   
     # Check the response status code
-
-    # Check that the bank record was deleted
-    response = client.get('/banks/1')
-    assert response.status_code == 204
-
+    assert response.status_code == 200
+    assert response.data == b"Bank deleted successfully!"

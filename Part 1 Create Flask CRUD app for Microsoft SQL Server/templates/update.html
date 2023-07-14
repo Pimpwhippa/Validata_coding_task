@@ -5,7 +5,10 @@
 </head>
 <body>
     <h1>Update Bank Record</h1>
-    <form action="/updatebank/{{ bank_id }}" method="POST">
+    <form action="/updatebank" method="POST">
+        <label for="id">ID:</label>
+        <input type="text" name="id" id="id" required><br>
+
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br><br>
 
