@@ -20,6 +20,21 @@ virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 flask run
 
 
+
+Available routes
+
+/create
+
+/banks (list all banks)
+
+/banks/<int:bank_id> (view a bank’s details)
+
+/updatebank
+
+/deletebank/<int:bank_id>
+
+
+
 For Part 2
 
 Loan_Train.csv is the original data. Run the preprocessing part of the preprocessing_script.py on it, you will get preprocessed_dataset.csv
