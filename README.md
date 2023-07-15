@@ -17,7 +17,7 @@ Also add your IP address in the allow list
 
 2.instructions on how to set up and run the application, including any necessary dependencies or libraries
 
-first make sure you have pyodbc installed in your machine
+first make sure you have ODBC Driver 18 installed in your machine
 
 git clone
 
@@ -45,6 +45,8 @@ Now the app should work with these available routes
 /updatebank
 
 /deletebank/<int:bank_id>
+
+in case it doesn't work, go to your SQL server, take your connection string, and replace the conn_str variable value in app.py
 
 
 
