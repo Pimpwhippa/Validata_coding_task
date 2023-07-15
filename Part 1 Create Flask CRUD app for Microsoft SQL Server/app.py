@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 import pyodbc
-from credentials import password
+from credentials import conn_str
 
 app = Flask(__name__)
 
 # Connection details for Azure SQL Database
-conn_str =f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+#conn_str =f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 
 # Define the route for creating a new record
 @app.route('/create', methods=['GET', 'POST'])
@@ -17,7 +17,6 @@ def create_bank():
         location = request.form['location']
         
         # Create a new connection to Azure SQL Server
-        conn_str =f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
         conn = pyodbc.connect(conn_str)
         
         # Insert new record into the "Banks" table
@@ -63,7 +62,6 @@ def list_banks():
 @app.route('/banks/<int:bank_id>')
 def get_bank(bank_id):
     # Create a new connection to Azure SQL Server
-    conn_str =f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
     conn = pyodbc.connect(conn_str)
 
     # Query the database to retrieve the bank details
@@ -131,7 +129,6 @@ def update_bank():
 @app.route('/deletebank/<int:bank_id>', methods=['GET','POST'])
 def delete_bank(bank_id):
     # Create a new connection to Azure SQL Server
-    conn_str = f"Driver={{ODBC Driver 18 for SQL Server}};Server=tcp:mybankssqlserver.database.windows.net,1433;Database=BanksDatabase;Uid=azureuser;Pwd={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
     conn = pyodbc.connect(conn_str)
 
     # Create a cursor to execute the SQL query
