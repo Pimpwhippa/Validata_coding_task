@@ -5,12 +5,6 @@ For Part 1
 1.initialization of Azure SQL Server can be done by following the instructions in this link
 https://learn.microsoft.com/en-us/azure/azure-sql/database/single-database-create-quickstart?view=azuresql-db&source=recommendations&tabs=azure-portal
 
-Server name: mybankssqlserver
-
-Database name: BanksDatabase
-
-User name: azureuser
-
 note your Azure SQL Database password to connect to it
 
 Also add your IP address in the allow list
@@ -46,7 +40,6 @@ Now the app should work with these available routes
 
 /deletebank/<int:bank_id>
 
-in case it doesn't work, go to your SQL server, take your connection string, and replace the conn_str variable value in app.py
 
 
 
